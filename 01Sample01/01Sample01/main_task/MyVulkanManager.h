@@ -65,5 +65,31 @@ public:
 	static float yAngle;
 	static float zAngle;
 
-
+	static void init_vulkan_instance(); //创建Vulkan实例
+	static void enumerate_vulkan_phy_devices(); //初始化物理设备
+	static void create_vulkan_devices(); //创建逻辑设备
+	static void create_vulkan_CommandBuffer(); //创建命令缓冲
+	static void create_vulkan_swapChain(); //初始化交换链
+	static void create_vulkan_DepthBuffer(); //创建深度缓冲相关
+	static void create_render_pass();		 //创建渲染通道
+	static void init_queue();		//获取设备中支持图形工作的队列
+	static void createDrawableObject(); //创建绘制用物体
+	static void drawObject(); //执行场景中的物体绘制
+	static void doVulkan(); //启动线程执行Vulkan任务
+	static void initPipeline(); //初始化管线
+	static void createFence(); //创建栅栏
+	static void initPresentInfo(); //初始化显示信息
+	static void initMatrix(); // 初始化矩阵
+	static void flushUniformBuffer(); //将一致变量数据送入缓冲
+	static void flushTexToDesSet(); //将纹理等数据与描述符关联
+	static void destroyFence();//销毁栅栏
+	static void destroyPipeline();//销毁管线
+	static void destroyDrawableObject();//销毁绘制用物体
+	static void destroy_frame_buffer();//销毁帧缓冲
+	static void destroy_render_pass();//销毁渲染通道
+	static void destroy_vulkan_DepthBuffer();//销毁深度缓冲相关
+	static void destroy_vulkan_swapChain();//销毁交换链
+	static void destroy_vulkan_CommandBuffer();//销毁命令缓冲
+	static void destroy_vulkan_devices();//销毁逻辑设备
+	static void destroy_vulkan_instance();//销毁实例
 };

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="util">
-      <UniqueIdentifier>{f7162205-2b7b-428c-9e31-8d6b9ae16124}</UniqueIdentifier>
-    </Filter>
     <Filter Include="legencyUtil">
       <UniqueIdentifier>{dc3be335-0fbf-4cce-816f-9531dceee6de}</UniqueIdentifier>
     </Filter>
@@ -24,22 +21,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="util\util.cpp">
-      <Filter>util</Filter>
-    </ClCompile>
     <ClCompile Include="main_task\main_task.cpp">
       <Filter>bndev</Filter>
     </ClCompile>
     <ClCompile Include="main_task\MyVulkanManager.cpp">
       <Filter>bndev</Filter>
     </ClCompile>
+    <ClCompile Include="util\util.cpp">
+      <Filter>legencyUtil</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="util\util.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="main_task\MyVulkanManager.h">
       <Filter>bndev</Filter>
+    </ClInclude>
+    <ClInclude Include="util\util.hpp">
+      <Filter>legencyUtil</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
