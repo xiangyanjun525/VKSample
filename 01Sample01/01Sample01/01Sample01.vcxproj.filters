@@ -19,6 +19,9 @@
     <Filter Include="bndev">
       <UniqueIdentifier>{ac922290-2313-4d30-b679-daebe00c299f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{029f3572-d337-4c90-9ab7-c8dd54b07417}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_task\main_task.cpp">
