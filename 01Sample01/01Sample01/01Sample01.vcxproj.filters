@@ -36,6 +36,12 @@
     <ClCompile Include="main_task\PathData.cpp">
       <Filter>bndev</Filter>
     </ClCompile>
+    <ClCompile Include="main_task\ShaderCompileUtil.cpp">
+      <Filter>bndev</Filter>
+    </ClCompile>
+    <ClCompile Include="main_task\ShaderQueueSuit_Common.cpp">
+      <Filter>bndev</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_task\MyVulkanManager.h">
@@ -45,6 +51,12 @@
       <Filter>legencyUtil</Filter>
     </ClInclude>
     <ClInclude Include="main_task\PathData.h">
+      <Filter>bndev</Filter>
+    </ClInclude>
+    <ClInclude Include="main_task\ShaderCompileUtil.h">
+      <Filter>bndev</Filter>
+    </ClInclude>
+    <ClInclude Include="main_task\ShaderQueueSuit_Common.h">
       <Filter>bndev</Filter>
     </ClInclude>
   </ItemGroup>

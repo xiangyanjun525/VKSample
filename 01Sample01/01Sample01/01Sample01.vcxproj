@@ -132,11 +132,15 @@
     <ClCompile Include="main_task\main_task.cpp" />
     <ClCompile Include="main_task\MyVulkanManager.cpp" />
     <ClCompile Include="main_task\PathData.cpp" />
+    <ClCompile Include="main_task\ShaderCompileUtil.cpp" />
+    <ClCompile Include="main_task\ShaderQueueSuit_Common.cpp" />
     <ClCompile Include="util\util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_task\MyVulkanManager.h" />
     <ClInclude Include="main_task\PathData.h" />
+    <ClInclude Include="main_task\ShaderCompileUtil.h" />
+    <ClInclude Include="main_task\ShaderQueueSuit_Common.h" />
     <ClInclude Include="util\util.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
