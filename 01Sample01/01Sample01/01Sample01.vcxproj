@@ -131,10 +131,12 @@
   <ItemGroup>
     <ClCompile Include="main_task\main_task.cpp" />
     <ClCompile Include="main_task\MyVulkanManager.cpp" />
+    <ClCompile Include="main_task\PathData.cpp" />
     <ClCompile Include="util\util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_task\MyVulkanManager.h" />
+    <ClInclude Include="main_task\PathData.h" />
     <ClInclude Include="util\util.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

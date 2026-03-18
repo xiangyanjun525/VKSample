@@ -50,7 +50,7 @@ public:
 	static VkPhysicalDeviceMemoryProperties memoryroperties; //物理设备内存属性
 	static VkDeviceMemory memDepth;   //深度缓冲图像对应的内存
 	static VkImageView depthImageView; //深度缓冲图像视图
-	static VkSemaphore imageAcquiredSeampgore; //渲染目标图像获取完成信号量
+	static VkSemaphore imageAcquiredSemaphore; //渲染目标图像获取完成信号量
 	static uint32_t currentBuffer; //从交换链中获取的当前渲染用图像对应的编号缓冲
 	static VkRenderPass renderPass; //渲染通道
 	static VkClearValue clear_values[2]; //渲染通道用清除帧缓冲深度，颜色附件的数据
@@ -73,6 +73,7 @@ public:
 	static void create_vulkan_DepthBuffer(); //创建深度缓冲相关
 	static void create_render_pass();		 //创建渲染通道
 	static void init_queue();		//获取设备中支持图形工作的队列
+	static void create_frame_buffer();//创建帧缓冲
 	static void createDrawableObject(); //创建绘制用物体
 	static void drawObject(); //执行场景中的物体绘制
 	static void doVulkan(); //启动线程执行Vulkan任务

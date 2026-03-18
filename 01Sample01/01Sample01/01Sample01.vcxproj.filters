@@ -33,6 +33,9 @@
     <ClCompile Include="util\util.cpp">
       <Filter>legencyUtil</Filter>
     </ClCompile>
+    <ClCompile Include="main_task\PathData.cpp">
+      <Filter>bndev</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_task\MyVulkanManager.h">
@@ -40,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="util\util.hpp">
       <Filter>legencyUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="main_task\PathData.h">
+      <Filter>bndev</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
