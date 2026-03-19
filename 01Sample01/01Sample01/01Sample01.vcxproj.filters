@@ -52,13 +52,13 @@
     <ClCompile Include="util\MatrixState3D.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="legencyUtil\util.cpp">
+      <Filter>legencyUtil</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_task\MyVulkanManager.h">
       <Filter>bndev</Filter>
-    </ClInclude>
-    <ClInclude Include="util\util.hpp">
-      <Filter>legencyUtil</Filter>
     </ClInclude>
     <ClInclude Include="main_task\PathData.h">
       <Filter>bndev</Filter>
@@ -92,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="util\MatrixState3D.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="legencyUtil\util.hpp">
+      <Filter>legencyUtil</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

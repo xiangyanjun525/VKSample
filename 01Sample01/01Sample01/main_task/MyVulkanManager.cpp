@@ -179,7 +179,8 @@ void MyVulkanManager::init_vulkan_instance()
 	}
 	else
 	{
-		printf("Vulkan实例创建失败!\n");
+		printf("Vulkan实例创建失败!错误代码: %d\n", result);
+		exit(1);
 	}
 }
 

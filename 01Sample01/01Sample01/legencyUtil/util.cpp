@@ -4,231 +4,301 @@
 #include <iomanip>
 #include <fstream>
 #include <iostream>
-#include <chrono>
-#include <thread>
-#include <string>
-#include <filesystem>
 #include "util.hpp"
-#include "SPIRV/GlslangToSpv.h"
+#include "glslang/SPIRV/GlslangToSpv.h"
 #include <Windows.h>
 #include "../main_task/MyVulkanManager.h"
 
-// 窗口初始化
-void init_window(struct WindowInfo& info, int32_t default_width, int32_t default_height)
-{
-    // 简单的窗口创建，实际可能需要更多设置
-    const char* CLASS_NAME = "VulkanWindowClass";
+using namespace std;
 
-    WNDCLASSA wc = {};
-    wc.lpfnWndProc = DefWindowProcA;
-    wc.hInstance = GetModuleHandle(NULL);
-    wc.lpszClassName = CLASS_NAME;
+int preX = 0;
+int preY = 0;
+bool mouseLeftDown = false;
 
-    RegisterClassA(&wc);
+//各种事件的处理方法
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	struct WindowInfo* info = reinterpret_cast<struct WindowInfo*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	switch (uMsg)
+	{
+	case WM_CLOSE:
+		PostQuitMessage(0);
+		break;
+	case WM_PAINT:
+		break;
+	case WM_LBUTTONDOWN://鼠标左键按下
+		preX = LOWORD(lParam);//鼠标的横坐标  
+		preY = HIWORD(lParam);//鼠标的纵坐标  
+		mouseLeftDown = true;
+		break;
+	case WM_LBUTTONUP:
+		mouseLeftDown = false;
+		break;
+	case WM_MOUSEMOVE: {//鼠标移动事件  		
+		if (mouseLeftDown)
+		{
+			int x = LOWORD(lParam);//鼠标的横坐标  
+			int y = HIWORD(lParam);//鼠标的纵坐标  
+			float xDis = (float)(x - preX);
+			float yDis = (float)(y - preY);
+			MyVulkanManager::yAngle = MyVulkanManager::yAngle + xDis * 180 / 200;
+			MyVulkanManager::zAngle = MyVulkanManager::zAngle + yDis * 180 / 200;
+			preX = x;
+			preY = y;
+		}
+		break;
+	}
+	default:
+		break;
+	}
 
-    info.width = default_width;
-    info.height = default_height;
-    strncpy_s(info.name, APP_NAME_STR_LEN, "Vulkan Sample", APP_NAME_STR_LEN - 1);
-
-    info.window = CreateWindowExA(
-        0,
-        CLASS_NAME,
-        info.name,
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        default_width, default_height,
-        NULL,
-        NULL,
-        wc.hInstance,
-        NULL
-    );
+	return (DefWindowProc(hWnd, uMsg, wParam, lParam));
 }
 
-// 窗口销毁
-void destroy_window(struct WindowInfo& info)
+//初始化窗体的方法
+void init_window(struct WindowInfo& info, int32_t default_width, int32_t default_height, HINSTANCE hInstance)
 {
-    if (info.window)
-    {
-        DestroyWindow(info.window);
-        info.window = NULL;
-    }
+	info.width = default_width;
+	info.height = default_height;
+	assert(info.width > 0);
+	assert(info.height > 0);
+
+	//设置窗体标题栏
+	sprintf(info.name, "VulkanBase NCST BNKJ");
+
+	//初始化窗体结构
+	WNDCLASSEX win_class;
+	win_class.cbSize = sizeof(WNDCLASSEX);
+	win_class.style = CS_HREDRAW | CS_VREDRAW;
+	win_class.lpfnWndProc = WndProc;
+	win_class.cbClsExtra = 0;
+	win_class.cbWndExtra = 0;
+	win_class.hInstance = hInstance;
+	win_class.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	win_class.hCursor = LoadCursor(NULL, IDC_ARROW);
+	win_class.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1); //(HBRUSH)GetStockObject(WHITE_BRUSH);
+	win_class.lpszMenuName = NULL;
+	win_class.lpszClassName = info.name;
+	win_class.hIconSm = LoadIcon(NULL, IDI_WINLOGO);
+
+	// 注册窗体
+	if (!RegisterClassEx(&win_class))
+	{
+		// 注册失败，打印错误信息
+		printf("Unexpected error trying to start the application!\n");
+		fflush(stdout);
+		exit(1);
+	}
+
+	// 生成窗体
+	RECT wr = { 0, 0, info.width, info.height };
+	//调整窗体矩形
+	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
+	info.window = CreateWindowEx(
+		0,						//窗口的扩展风格
+		info.name,				//指向注册类名的指针
+		info.name,				//指向窗口名称的指针
+		WS_OVERLAPPEDWINDOW |	//窗口的风格
+		WS_VISIBLE | WS_SYSMENU,
+		100, 100,				//窗体左上角坐标
+		wr.right - wr.left,		//窗体宽度
+		wr.bottom - wr.top,		//窗体高度
+		NULL,					//父窗口的句柄
+		NULL,					//菜单的句柄或是子窗口的标识符
+		hInstance,		//应用程序实例的句柄 
+		&info);					//指向窗口的创建数据
+
+
+	if (!info.window)
+	{
+		// 生成失败，打印错误信息
+		printf("Cannot create a window in which to draw!\n");
+		fflush(stdout);
+		exit(1);
+	}
+	//设置窗口的用户数据为窗体创建的info数据，已被需要时可以从窗体获取
+	SetWindowLongPtr(info.window, GWLP_USERDATA, (LONG_PTR)&info);
+
+	ShowWindow(info.window, SW_SHOWNA);
+	UpdateWindow(info.window);
+}
+//销毁窗体
+void destroy_window(struct WindowInfo& info) {
+	DestroyWindow(info.window);
 }
 
-// 初始化glslang
-void init_glslang()
+//不带命令行窗口运行时的主方法
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
-    glslang::InitializeProcess();
+	//初始化
+	init_window(MyVulkanManager::info, 1366, 768, hPrevInstance);
+	//自己的Vulkan框架执行
+	sample_main();
+	//建立消息循环
+	MSG msg;
+	while (GetMessage(&msg, nullptr, 0, 0))
+	{
+		DispatchMessage(&msg);
+	}
+	return (int)msg.wParam;
 }
 
-// 清理glslang
-void finalize_glslang()
+//命令行窗口运行时的主方法
+int main(int argc, char** argv)
 {
-    glslang::FinalizeProcess();
+	init_window(MyVulkanManager::info, 1366, 768, GetModuleHandle(NULL));
+	sample_main();
+	//建立消息循环
+	MSG msg;
+	while (GetMessage(&msg, nullptr, 0, 0))
+	{
+		DispatchMessage(&msg);
+	}
+	return (int)msg.wParam;
 }
 
-// 等待指定秒数
-void wait_seconds(int seconds)
-{
-    std::this_thread::sleep_for(std::chrono::seconds(seconds));
+void init_resources(TBuiltInResource& Resources) {
+	Resources.maxLights = 32;
+	Resources.maxClipPlanes = 6;
+	Resources.maxTextureUnits = 32;
+	Resources.maxTextureCoords = 32;
+	Resources.maxVertexAttribs = 64;
+	Resources.maxVertexUniformComponents = 4096;
+	Resources.maxVaryingFloats = 64;
+	Resources.maxVertexTextureImageUnits = 32;
+	Resources.maxCombinedTextureImageUnits = 80;
+	Resources.maxTextureImageUnits = 32;
+	Resources.maxFragmentUniformComponents = 4096;
+	Resources.maxDrawBuffers = 32;
+	Resources.maxVertexUniformVectors = 128;
+	Resources.maxVaryingVectors = 8;
+	Resources.maxFragmentUniformVectors = 16;
+	Resources.maxVertexOutputVectors = 16;
+	Resources.maxFragmentInputVectors = 15;
+	Resources.minProgramTexelOffset = -8;
+	Resources.maxProgramTexelOffset = 7;
+	Resources.maxClipDistances = 8;
+	Resources.maxComputeWorkGroupCountX = 65535;
+	Resources.maxComputeWorkGroupCountY = 65535;
+	Resources.maxComputeWorkGroupCountZ = 65535;
+	Resources.maxComputeWorkGroupSizeX = 1024;
+	Resources.maxComputeWorkGroupSizeY = 1024;
+	Resources.maxComputeWorkGroupSizeZ = 64;
+	Resources.maxComputeUniformComponents = 1024;
+	Resources.maxComputeTextureImageUnits = 16;
+	Resources.maxComputeImageUniforms = 8;
+	Resources.maxComputeAtomicCounters = 8;
+	Resources.maxComputeAtomicCounterBuffers = 1;
+	Resources.maxVaryingComponents = 60;
+	Resources.maxVertexOutputComponents = 64;
+	Resources.maxGeometryInputComponents = 64;
+	Resources.maxGeometryOutputComponents = 128;
+	Resources.maxFragmentInputComponents = 128;
+	Resources.maxImageUnits = 8;
+	Resources.maxCombinedImageUnitsAndFragmentOutputs = 8;
+	Resources.maxCombinedShaderOutputResources = 8;
+	Resources.maxImageSamples = 0;
+	Resources.maxVertexImageUniforms = 0;
+	Resources.maxTessControlImageUniforms = 0;
+	Resources.maxTessEvaluationImageUniforms = 0;
+	Resources.maxGeometryImageUniforms = 0;
+	Resources.maxFragmentImageUniforms = 8;
+	Resources.maxCombinedImageUniforms = 8;
+	Resources.maxGeometryTextureImageUnits = 16;
+	Resources.maxGeometryOutputVertices = 256;
+	Resources.maxGeometryTotalOutputComponents = 1024;
+	Resources.maxGeometryUniformComponents = 1024;
+	Resources.maxGeometryVaryingComponents = 64;
+	Resources.maxTessControlInputComponents = 128;
+	Resources.maxTessControlOutputComponents = 128;
+	Resources.maxTessControlTextureImageUnits = 16;
+	Resources.maxTessControlUniformComponents = 1024;
+	Resources.maxTessControlTotalOutputComponents = 4096;
+	Resources.maxTessEvaluationInputComponents = 128;
+	Resources.maxTessEvaluationOutputComponents = 128;
+	Resources.maxTessEvaluationTextureImageUnits = 16;
+	Resources.maxTessEvaluationUniformComponents = 1024;
+	Resources.maxTessPatchComponents = 120;
+	Resources.maxPatchVertices = 32;
+	Resources.maxTessGenLevel = 64;
+	Resources.maxViewports = 16;
+	Resources.maxVertexAtomicCounters = 0;
+	Resources.maxTessControlAtomicCounters = 0;
+	Resources.maxTessEvaluationAtomicCounters = 0;
+	Resources.maxGeometryAtomicCounters = 0;
+	Resources.maxFragmentAtomicCounters = 8;
+	Resources.maxCombinedAtomicCounters = 8;
+	Resources.maxAtomicCounterBindings = 1;
+	Resources.maxVertexAtomicCounterBuffers = 0;
+	Resources.maxTessControlAtomicCounterBuffers = 0;
+	Resources.maxTessEvaluationAtomicCounterBuffers = 0;
+	Resources.maxGeometryAtomicCounterBuffers = 0;
+	Resources.maxFragmentAtomicCounterBuffers = 1;
+	Resources.maxCombinedAtomicCounterBuffers = 1;
+	Resources.maxAtomicCounterBufferSize = 16384;
+	Resources.maxTransformFeedbackBuffers = 4;
+	Resources.maxTransformFeedbackInterleavedComponents = 64;
+	Resources.maxCullDistances = 8;
+	Resources.maxCombinedClipAndCullDistances = 8;
+	Resources.maxSamples = 4;
+	Resources.limits.nonInductiveForLoops = 1;
+	Resources.limits.whileLoops = 1;
+	Resources.limits.doWhileLoops = 1;
+	Resources.limits.generalUniformIndexing = 1;
+	Resources.limits.generalAttributeMatrixVectorIndexing = 1;
+	Resources.limits.generalVaryingIndexing = 1;
+	Resources.limits.generalSamplerIndexing = 1;
+	Resources.limits.generalVariableIndexing = 1;
+	Resources.limits.generalConstantMatrixVectorIndexing = 1;
 }
 
-// 打印UUID
-void print_UUID(uint8_t* pipelineCacheUUID)
-{
-    for (int i = 0; i < VK_UUID_SIZE; ++i)
-    {
-        printf("%02x", pipelineCacheUUID[i]);
-    }
-    printf("\n");
+EShLanguage FindLanguage(const VkShaderStageFlagBits shader_type) {
+	switch (shader_type) {
+	case VK_SHADER_STAGE_VERTEX_BIT:
+		return EShLangVertex;
+
+	case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT:
+		return EShLangTessControl;
+
+	case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT:
+		return EShLangTessEvaluation;
+
+	case VK_SHADER_STAGE_GEOMETRY_BIT:
+		return EShLangGeometry;
+
+	case VK_SHADER_STAGE_FRAGMENT_BIT:
+		return EShLangFragment;
+
+	case VK_SHADER_STAGE_COMPUTE_BIT:
+		return EShLangCompute;
+
+	default:
+		return EShLangVertex;
+	}
 }
 
-// 获取文件目录
-std::string get_file_directory()
-{
-    char buffer[MAX_PATH];
-    GetModuleFileNameA(NULL, buffer, MAX_PATH);
-    std::string path = buffer;
-    size_t pos = path.find_last_of("\\/");
-    return (pos != std::string::npos) ? path.substr(0, pos) : "";
+void init_glslang() {
+	glslang::InitializeProcess();
 }
 
-// 获取毫秒时间戳
-timestamp_t get_milliseconds()
-{
-    auto now = std::chrono::steady_clock::now();
-    return std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+void finalize_glslang() {
+	glslang::FinalizeProcess();
 }
-
-// 初始化glslang资源
-void init_resources(TBuiltInResource& Resources)
-{
-    // 默认资源限制，根据实际需要调整
-    Resources.maxLights = 32;
-    Resources.maxClipPlanes = 6;
-    Resources.maxTextureUnits = 32;
-    Resources.maxTextureCoords = 32;
-    Resources.maxVertexAttribs = 64;
-    Resources.maxVertexUniformComponents = 4096;
-    Resources.maxVaryingFloats = 64;
-    Resources.maxVertexTextureImageUnits = 32;
-    Resources.maxCombinedTextureImageUnits = 80;
-    Resources.maxTextureImageUnits = 32;
-    Resources.maxFragmentUniformComponents = 4096;
-    Resources.maxDrawBuffers = 32;
-    Resources.maxVertexUniformVectors = 128;
-    Resources.maxVaryingVectors = 8;
-    Resources.maxFragmentUniformVectors = 16;
-    Resources.maxVertexOutputVectors = 16;
-    Resources.maxFragmentInputVectors = 15;
-    Resources.minProgramTexelOffset = -8;
-    Resources.maxProgramTexelOffset = 7;
-    Resources.maxClipDistances = 8;
-    Resources.maxComputeWorkGroupCountX = 65535;
-    Resources.maxComputeWorkGroupCountY = 65535;
-    Resources.maxComputeWorkGroupCountZ = 65535;
-    Resources.maxComputeWorkGroupSizeX = 1024;
-    Resources.maxComputeWorkGroupSizeY = 1024;
-    Resources.maxComputeWorkGroupSizeZ = 64;
-    Resources.maxComputeUniformComponents = 1024;
-    Resources.maxComputeTextureImageUnits = 16;
-    Resources.maxComputeImageUniforms = 8;
-    Resources.maxComputeAtomicCounters = 8;
-    Resources.maxComputeAtomicCounterBuffers = 1;
-    Resources.maxVaryingComponents = 60;
-    Resources.maxVertexOutputComponents = 64;
-    Resources.maxGeometryInputComponents = 64;
-    Resources.maxGeometryOutputComponents = 128;
-    Resources.maxFragmentInputComponents = 128;
-    Resources.maxImageUnits = 8;
-    Resources.maxCombinedImageUnitsAndFragmentOutputs = 8;
-    Resources.maxCombinedShaderOutputResources = 8;
-    Resources.maxImageSamples = 0;
-    Resources.maxVertexImageUniforms = 0;
-    Resources.maxTessControlImageUniforms = 0;
-    Resources.maxTessEvaluationImageUniforms = 0;
-    Resources.maxGeometryImageUniforms = 0;
-    Resources.maxFragmentImageUniforms = 8;
-    Resources.maxCombinedImageUniforms = 8;
-    Resources.maxGeometryTextureImageUnits = 16;
-    Resources.maxGeometryOutputVertices = 256;
-    Resources.maxGeometryTotalOutputComponents = 1024;
-    Resources.maxGeometryUniformComponents = 1024;
-    Resources.maxGeometryVaryingComponents = 64;
-    Resources.maxTessControlInputComponents = 128;
-    Resources.maxTessControlOutputComponents = 128;
-    Resources.maxTessControlTextureImageUnits = 16;
-    Resources.maxTessControlUniformComponents = 1024;
-    Resources.maxTessControlTotalOutputComponents = 4096;
-    Resources.maxTessEvaluationInputComponents = 128;
-    Resources.maxTessEvaluationOutputComponents = 128;
-    Resources.maxTessEvaluationTextureImageUnits = 16;
-    Resources.maxTessEvaluationUniformComponents = 1024;
-    Resources.maxTessPatchComponents = 120;
-    Resources.maxPatchVertices = 32;
-    Resources.maxTessGenLevel = 64;
-    Resources.maxViewports = 16;
-    Resources.maxVertexAtomicCounters = 0;
-    Resources.maxTessControlAtomicCounters = 0;
-    Resources.maxTessEvaluationAtomicCounters = 0;
-    Resources.maxGeometryAtomicCounters = 0;
-    Resources.maxFragmentAtomicCounters = 8;
-    Resources.maxCombinedAtomicCounters = 8;
-    Resources.maxAtomicCounterBindings = 1;
-    Resources.maxVertexAtomicCounterBuffers = 0;
-    Resources.maxTessControlAtomicCounterBuffers = 0;
-    Resources.maxTessEvaluationAtomicCounterBuffers = 0;
-    Resources.maxGeometryAtomicCounterBuffers = 0;
-    Resources.maxFragmentAtomicCounterBuffers = 1;
-    Resources.maxCombinedAtomicCounterBuffers = 1;
-    Resources.maxAtomicCounterBufferSize = 16384;
-    Resources.maxTransformFeedbackBuffers = 4;
-    Resources.maxTransformFeedbackInterleavedComponents = 64;
-    Resources.maxCullDistances = 8;
-    Resources.maxCombinedClipAndCullDistances = 8;
-    Resources.maxSamples = 4;
-    Resources.limits.nonInductiveForLoops = 1;
-    Resources.limits.whileLoops = 1;
-    Resources.limits.doWhileLoops = 1;
-    Resources.limits.generalUniformIndexing = 1;
-    Resources.limits.generalAttributeMatrixVectorIndexing = 1;
-    Resources.limits.generalVaryingIndexing = 1;
-    Resources.limits.generalSamplerIndexing = 1;
-    Resources.limits.generalVariableIndexing = 1;
-    Resources.limits.generalConstantMatrixVectorIndexing = 1;
+void wait_seconds(int seconds) {
+	Sleep(seconds * 1000);
 }
-
-// 查找着色器语言
-EShLanguage FindLanguage(const VkShaderStageFlagBits shader_type)
-{
-    switch (shader_type)
-    {
-    case VK_SHADER_STAGE_VERTEX_BIT:
-        return EShLangVertex;
-    case VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT:
-        return EShLangTessControl;
-    case VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT:
-        return EShLangTessEvaluation;
-    case VK_SHADER_STAGE_GEOMETRY_BIT:
-        return EShLangGeometry;
-    case VK_SHADER_STAGE_FRAGMENT_BIT:
-        return EShLangFragment;
-    case VK_SHADER_STAGE_COMPUTE_BIT:
-        return EShLangCompute;
-    case VK_SHADER_STAGE_RAYGEN_BIT_KHR:
-    case VK_SHADER_STAGE_ANY_HIT_BIT_KHR:
-    case VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR:
-    case VK_SHADER_STAGE_MISS_BIT_KHR:
-    case VK_SHADER_STAGE_INTERSECTION_BIT_KHR:
-    case VK_SHADER_STAGE_CALLABLE_BIT_KHR:
-        // 光线追踪着色器，可能需要特定处理
-        return EShLangRayGen;
-    default:
-        return EShLangVertex;
-    }
-}
-
-// 主函数
-int main()
-{
-    return sample_main();
+//获取毫秒数
+timestamp_t get_milliseconds() {
+	LARGE_INTEGER frequency;
+	BOOL useQPC = QueryPerformanceFrequency(&frequency);
+	if (useQPC) {
+		LARGE_INTEGER now;
+		QueryPerformanceCounter(&now);
+		return (1000LL * now.QuadPart) / frequency.QuadPart;
+	}
+	else {
+		return GetTickCount();
+	}
 }
