@@ -76,10 +76,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.4.335.0\Include;C:\VulkanSDK\1.4.335.0\Include\glslang;./util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\VulkanSDK\1.4.335.0\Lib\glslangd.lib;C:\VulkanSDK\1.4.335.0\Lib\OSDependentd.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRVd.lib;C:\VulkanSDK\1.4.335.0\Lib\vulkan-1.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV-Toolsd.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV-Tools-optd.lib;C:\VulkanSDK\1.4.335.0\Lib\shaderc_combinedd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -90,10 +92,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.4.335.0\Include;C:\VulkanSDK\1.4.335.0\Include\glslang;./util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\VulkanSDK\1.4.335.0\Lib\glslang.lib;C:\VulkanSDK\1.4.335.0\Lib\OSDependent.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV.lib;C:\VulkanSDK\1.4.335.0\Lib\vulkan-1.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV-Tools.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV-Tools-opt.lib;C:\VulkanSDK\1.4.335.0\Lib\shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -103,12 +107,12 @@
       <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;VK_USE_PLATFORM_WIN32_KHR;WIN32_LEAN_AND_MEAN;VK_DYNAMIC_STATE_RANGE_SIZE=32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>../../thirdParty/glsl/include/glslang;../../glsl/include/spirv-tools/include;$(VK_SDK_PATH)/Include;./util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.4.335.0\Include;C:\VulkanSDK\1.4.335.0\Include\glslang;./util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;../../thirdParty/glsl/lib/glslangd.lib;../../thirdParty/glsl/lib//OSDependentd.lib;../../thirdParty/glsl/lib/SPIRVd.lib;$(VK_SDK_PATH)/Lib/vulkan-1.lib;../../thirdParty/glsl/lib/SPIRV-Toolsd.lib;../../thirdParty/glsl/lib/SPIRV-Tools-optd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\VulkanSDK\1.4.335.0\Lib\glslangd.lib;C:\VulkanSDK\1.4.335.0\Lib\OSDependentd.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRVd.lib;C:\VulkanSDK\1.4.335.0\Lib\vulkan-1.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV-Toolsd.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV-Tools-optd.lib;C:\VulkanSDK\1.4.335.0\Lib\shaderc_combinedd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -120,12 +124,12 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;VK_USE_PLATFORM_WIN32_KHR;WIN32_LEAN_AND_MEAN;VK_DYNAMIC_STATE_RANGE_SIZE=32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>../../thirdParty/glsl/include/glslang;../../glsl/include/spirv-tools/include;$(VK_SDK_PATH)/Include;./util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VulkanSDK\1.4.335.0\Include;C:\VulkanSDK\1.4.335.0\Include\glslang;./util;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;../../thirdParty/glsl/lib/glslangd.lib;../../thirdParty/glsl/lib//OSDependent.lib;../../thirdParty/glsl/lib/SPIRV.lib;$(VK_SDK_PATH)/Lib/vulkan-1.lib;../../thirdParty/glsl/lib/SPIRV-Tools.lib;../../thirdParty/glsl/lib/SPIRV-Tools-opt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;C:\VulkanSDK\1.4.335.0\Lib\glslang.lib;C:\VulkanSDK\1.4.335.0\Lib\OSDependent.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV.lib;C:\VulkanSDK\1.4.335.0\Lib\vulkan-1.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV-Tools.lib;C:\VulkanSDK\1.4.335.0\Lib\SPIRV-Tools-opt.lib;C:\VulkanSDK\1.4.335.0\Lib\shaderc_combined.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -134,13 +138,28 @@
     <ClCompile Include="main_task\PathData.cpp" />
     <ClCompile Include="main_task\ShaderCompileUtil.cpp" />
     <ClCompile Include="main_task\ShaderQueueSuit_Common.cpp" />
-    <ClCompile Include="util\util.cpp" />
+    <ClCompile Include="main_task\ThreadTask.cpp" />
+    <ClCompile Include="main_task\TriangleData.cpp" />
+    <ClCompile Include="util\DrawableObjectCommon.cpp" />
+    <ClCompile Include="util\FileUtil.cpp" />
+    <ClCompile Include="util\FPSUtil.cpp" />
+    <ClCompile Include="util\HelpFunction.cpp" />
+    <ClCompile Include="util\MatrixState3D.cpp" />
+    <ClCompile Include="legencyUtil\util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_task\MyVulkanManager.h" />
     <ClInclude Include="main_task\PathData.h" />
     <ClInclude Include="main_task\ShaderCompileUtil.h" />
     <ClInclude Include="main_task\ShaderQueueSuit_Common.h" />
+    <ClInclude Include="main_task\ThreadTask.h" />
+    <ClInclude Include="main_task\TriangleData.h" />
+    <ClInclude Include="util\DrawableObjectCommon.h" />
+    <ClInclude Include="util\FileUtil.h" />
+    <ClInclude Include="util\FPSUtil.h" />
+    <ClInclude Include="util\HelpFunction.h" />
+    <ClInclude Include="util\Matrix.h" />
+    <ClInclude Include="util\MatrixState3D.h" />
     <ClInclude Include="util\util.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

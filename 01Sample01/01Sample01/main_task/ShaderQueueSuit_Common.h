@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -17,7 +17,7 @@ private:
 	void create_uniform_buffer(VkDevice& device, VkPhysicalDeviceMemoryProperties& memoryoperties);//创建一致变量缓冲
 	void destroy_uniform_buffer(VkDevice& device); //销毁一致变量
 	void create_pipeline_layout(VkDevice& device); //创建管线布局
-	void destroy_pipelien_layout(VkDevice& device); //销毁管线布局
+	void destroy_pipeline_layout(VkDevice& device); //销毁管线布局
 	void init_descriptor_set(VkDevice& device); //初始化描述集
 	void create_shader(VkDevice& device); //创建着色器
 	void destroy_shader(VkDevice& device); //销毁着色器
@@ -25,11 +25,12 @@ private:
 	void create_pipe_line(VkDevice& device, VkRenderPass& renderPass); //创建管线
 	void destroy_pipe_line(VkDevice& device); //销毁管线
 public:
-	int bufferByteCount;	//一致缓冲总字节数
-	VkDeviceMemory memUniformBuf; //一致变量缓冲内存
-	VkWriteDescriptorSet writes[1]; //一致变量写入描述集
-	std::vector<VkDescriptorSet> descSet; //描述集列表
-	VkPipeline pipeline; //管线
+	int bufferByteCount;//一致缓冲总字节数
+	VkDeviceMemory memUniformBuf;//一致变量缓冲内存
+	VkWriteDescriptorSet writes[1];//一致变量写入描述集
+	std::vector<VkDescriptorSet> descSet;//描述集列表
+	VkPipelineLayout pipelineLayout;//管线布局
+	VkPipeline pipeline;//管线
 	ShaderQueueSuit_Common(VkDevice* deviceIn, VkRenderPass& renderPass, VkPhysicalDeviceMemoryProperties& memoryroperties);//构造函数
 	~ShaderQueueSuit_Common();//析构函数
 };

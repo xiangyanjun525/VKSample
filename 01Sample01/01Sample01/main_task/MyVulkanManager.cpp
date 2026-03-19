@@ -91,7 +91,7 @@ void setImageLayout(VkCommandBuffer cmd, VkImage image,
 
 //静态成员实现
 struct WindowInfo MyVulkanManager::info;
-bool MyVulkanManager::loopDrawFlag = true;
+std::atomic<bool> MyVulkanManager::loopDrawFlag = true;
 std::vector<const char*>  MyVulkanManager::instanceExtensionNames;
 VkInstance MyVulkanManager::instance;
 uint32_t MyVulkanManager::gpuCount;
@@ -199,7 +199,7 @@ void MyVulkanManager::enumerate_vulkan_phy_devices()
 	assert(result == VK_SUCCESS);
 	printf("[Vulkan硬件设备数量为%d个]", gpuCount);
 	gpus.resize(gpuCount);
-	VkResult result = vkEnumeratePhysicalDevices(instance, &gpuCount, gpus.data());//填充物理设备列表
+	result = vkEnumeratePhysicalDevices(instance, &gpuCount, gpus.data());//填充物理设备列表
 	assert(result == VK_SUCCESS);
 	vkGetPhysicalDeviceMemoryProperties(gpus[USED_GPU_INDEX], &memoryroperties);//获取第一物理设备的内存属性
 }
@@ -228,7 +228,6 @@ void MyVulkanManager::create_vulkan_devices()
 		}
 	}
 
-	float queue_priorities[1] = { 0.0 };
 	float queue_priorities[1] = { 0.0 };//创建队列优先级数组
 	queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;//给出结构体类型
 	queueInfo.pNext = NULL;//自定义数据的指针
@@ -261,7 +260,6 @@ void MyVulkanManager::destroy_vulkan_devices()
 //创建命令缓冲的方法
 void MyVulkanManager::create_vulkan_CommandBuffer()
 {
-	VkCommandPoolCreateInfo cmd_pool_info = {};
 	VkCommandPoolCreateInfo cmd_pool_info = {};//构建命令池创建信息结构体实例
 	cmd_pool_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO; 	//给定结构体类型
 	cmd_pool_info.pNext = NULL;//自定义数据的指针
@@ -270,7 +268,6 @@ void MyVulkanManager::create_vulkan_CommandBuffer()
 	VkResult result = vkCreateCommandPool(device, &cmd_pool_info, NULL, &cmdPool);//创建命令池
 	assert(result == VK_SUCCESS);//检查命令池创建是否成功
 
-	VkCommandBufferAllocateInfo cmdBAI = {};
 	VkCommandBufferAllocateInfo cmdBAI = {};//构建命令缓冲分配信息结构体实例
 	cmdBAI.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;//给定结构体类型
 	cmdBAI.pNext = NULL;//自定义数据的指针
@@ -285,9 +282,6 @@ void MyVulkanManager::create_vulkan_CommandBuffer()
 	cmd_buf_info.flags = 0;//描述使用标志
 	cmd_buf_info.pInheritanceInfo = NULL;//命令缓冲继承信息
 	cmd_bufs[0] = cmdBuffer;//要提交到队列执行的命令缓冲数组
-
-	VkPipelineStageFlags* pipe_stage_flags = new VkPipelineStageFlags();
-	*pipe_stage_flags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
 	VkPipelineStageFlags* pipe_stage_flags = new VkPipelineStageFlags();//目标管线阶段
 	*pipe_stage_flags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -892,7 +886,7 @@ void MyVulkanManager::drawObject()
 void MyVulkanManager::doVulkan()
 {
 	ThreadTask* tt = new ThreadTask();
-	thread t1(&ThreadTask::doTask, tt);
+	std::thread t1(&ThreadTask::doTask, tt);
 	t1.detach();
 }
 
